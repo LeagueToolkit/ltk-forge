@@ -344,13 +344,356 @@ league_mod_core::pack(config, options)?;
 | Edit Properties | Visibility flags, material, lightmap |
 | Bucket Visualization | Debug view of spatial bucketing |
 | Add/Remove Meshes | Insert props, delete geometry |
-| Save | Write modified `.mapgeo` to layer |
+| Save | Write modified `.mapgeo` + `materials.bin` to layer |
+
+#### Map Data Architecture
+
+A League map consists of two primary files:
+
+| File | Purpose |
+|------|---------|
+| `.mapgeo` | Binary 3D geometry (vertices, indices, UV mappings, transforms, spatial buckets) |
+| `materials.bin` | Serialized map data (materials, map objects, components, properties) |
+
+The `materials.bin` file uses the property bin format and contains a [`MapContainer`](https://meta-wiki.leaguetoolkit.dev/classes/mapcontainer/) as its main entry point:
+
+```
+MapContainer
+├── mapPath: string              # Path to .mapgeo file
+├── boundsMin/Max: vec2          # World space bounds
+├── lowestWalkableHeight: f32    # Navigation floor
+├── components: List<MapComponent>
+│   ├── MapBakeProperties        # Lightmap paths, shadow UV atlas
+│   ├── MapNavGrid               # AI navigation grid
+│   ├── MapSunProperties         # Sun direction, colors, fog
+│   ├── MapLightingV2            # Lighting parameters
+│   ├── MapTerrainPaint          # Terrain splat texture
+│   └── MapMinimap               # Minimap texture path
+└── chunks: Map<Hash, MapPlaceableContainer>
+    ├── "Default"                # Main geometry chunk
+    ├── "Ground"                 # Terrain
+    ├── "Plants"                 # Foliage
+    ├── "Particles"              # VFX placements
+    ├── "Locators"               # Spawn points, markers
+    └── "Audio"                  # Audio regions
+```
+
+See: [MapComponent](https://meta-wiki.leaguetoolkit.dev/classes/mapcomponent/) | [MapPlaceableBase](https://meta-wiki.leaguetoolkit.dev/classes/mapplaceablebase/)
+
+**Example from Brawl (Map35)**:
+
+```
+"Maps/MapGeometry/Map35/Base" = MapContainer {
+    mapPath: string = "Maps/MapGeometry/Map35/Base"
+    boundsMax: vec2 = { 7000, 7000 }
+    lowestWalkableHeight: f32 = -100
+    
+    components: [
+        MapBakeProperties {
+            lightGridSize: u32 = 256
+            lightGridFileName: "ASSETS/Maps/Lightmaps/.../LightGrid.Brawl_CubemapProbe.dat"
+            // Per-mesh shadow map UV scale/bias mappings
+        }
+        MapNavGrid {
+            NavGridPath: "ASSETS/Maps/NavGrid/Map35/AIPATH_BRAWL.aimesh_ngrid"
+        }
+        MapSunProperties {
+            sunColor: { 1, 0.956, 0.786, 1 }
+            sunDirection: { -0.217, 0.790, 0.574 }
+            fogColor: { 0.598, 0.879, 0.943, 1 }
+        }
+        MapTerrainPaint {
+            TerrainPaintTexturePath: "ASSETS/Maps/TerrainPaint/.../Base.Brawl.png"
+        }
+        MapMinimap {
+            texturePath: "ASSETS/Maps/Info/Map35/Minimap7.Brawl.tex"
+        }
+    ]
+    
+    chunks: {
+        "Default"   -> MapPlaceableContainer  // Main static geometry
+        "Ground"    -> MapPlaceableContainer  // Terrain meshes
+        "Plants"    -> MapPlaceableContainer  // Foliage
+        "Particles" -> MapPlaceableContainer  // VFX placements
+        "Locators"  -> MapPlaceableContainer  // Spawn/objective markers
+        "Audio"     -> MapPlaceableContainer  // Audio regions
+    }
+}
+```
+
+#### Forge Map Workflow
+
+```mermaid
+flowchart LR
+    subgraph Input["Input Files"]
+        MAPGEO[".mapgeo<br/>(Geometry)"]
+        MATBIN["materials.bin<br/>(Properties)"]
+    end
+    
+    subgraph Forge["LTK Forge Editor"]
+        PARSE["Parse & Load"]
+        EDIT["Edit Scene"]
+        RENDER["3D Viewport"]
+    end
+    
+    subgraph Output["Baked Output"]
+        OUT_MAPGEO[".mapgeo"]
+        OUT_BIN["materials.bin"]
+    end
+    
+    MAPGEO --> PARSE
+    MATBIN --> PARSE
+    PARSE --> EDIT
+    EDIT --> RENDER
+    EDIT --> OUT_MAPGEO
+    EDIT --> OUT_BIN
+```
 
 **Technical Notes**:
 
 - Requires mapgeo parser (see [Issue #85](https://github.com/LeagueToolkit/league-toolkit/issues/85))
+- Requires `ltk_ritobin` for parsing `materials.bin` property bin files
 - Bucketed geometry is read-only visualization (regenerated on save)
-- Materials loaded from `.bin` files via `ltk_ritobin`
+- Materials are defined in `materials.bin` and referenced by hash from meshes
+- Chunks organize map content into logical groups (terrain, props, particles, etc.)
+- Components define global map properties (lighting, navigation, minimap)
+
+#### Lightmap Baking
+
+When modifying map geometry or lighting, lightmaps must be re-baked to produce correct in-game visuals. Forge aims to provide a lightmap baking pipeline that generates game-compatible output.
+
+**Baked Lighting Components**:
+
+| Component | Description | Output |
+|-----------|-------------|--------|
+| **Light Grid** | 3D grid of lighting probes for dynamic objects (characters) | `LightGrid.dat` + texture arrays |
+| **Shadow Atlas** | Baked shadows from stationary lights, packed per-mesh | `StationaryShadows_N.tex` |
+| **Per-Mesh UV Mapping** | Scale/bias to map mesh UVs to shadow atlas regions | `MapPerInstanceInfo` in `.bin` |
+
+**Light Grid Baking Pipeline**:
+
+```mermaid
+flowchart TD
+    subgraph Input["Input"]
+        GEOM["Map Geometry"]
+        SUN["Sun Properties"]
+        LIGHTS["Stationary Lights"]
+    end
+    
+    subgraph Probe["Probe Capture"]
+        GRID["Generate 256×256 Probe Grid"]
+        HEMI["Render Hemisphere/Cubemap at Each Probe"]
+    end
+    
+    subgraph Compress["Compression"]
+        SH["Compress to Spherical Harmonics"]
+        TEX["Pack into Texture Arrays (8 slices)"]
+    end
+    
+    subgraph Output["Output Files"]
+        DAT["LightGrid.dat<br/>(probe metadata)"]
+        TEXOUT["LightGrid_array_N_of_8.tex<br/>(SH coefficients)"]
+    end
+    
+    GEOM --> GRID
+    SUN --> HEMI
+    LIGHTS --> HEMI
+    GRID --> HEMI
+    HEMI --> SH
+    SH --> TEX
+    TEX --> DAT
+    TEX --> TEXOUT
+```
+
+**Shadow Atlas Baking Pipeline**:
+
+```mermaid
+flowchart TD
+    subgraph Input["Input"]
+        MESHES["Static Meshes"]
+        LIGHTS2["Stationary Lights"]
+    end
+    
+    subgraph Render["Shadow Rendering"]
+        SHADOW["Render Shadow Map per Light"]
+        UNWRAP["UV Unwrap Each Mesh (texcoord1)"]
+    end
+    
+    subgraph Pack["Atlas Packing"]
+        RECT["Rectangle Bin-Packing Algorithm"]
+        ATLAS["Composite into Atlas Texture"]
+        UVMAP["Calculate UV Scale/Bias per Mesh"]
+    end
+    
+    subgraph Output["Output"]
+        SHADOWTEX["StationaryShadows_N.tex"]
+        BINDATA["MapPerInstanceInfo entries"]
+    end
+    
+    MESHES --> SHADOW
+    LIGHTS2 --> SHADOW
+    MESHES --> UNWRAP
+    SHADOW --> RECT
+    UNWRAP --> RECT
+    RECT --> ATLAS
+    RECT --> UVMAP
+    ATLAS --> SHADOWTEX
+    UVMAP --> BINDATA
+```
+
+**MapPerInstanceInfo Output Format**:
+
+```
+0xa300dcea = MapPerInstanceInfo {
+    shadowMapPath: "ASSETS/Maps/Lightmaps/.../StationaryShadows_0.tex"
+    shadowMapUVScaleAndBias: vec4 = { scale_x, scale_y, bias_x, bias_y }
+}
+```
+
+The `shadowMapUVScaleAndBias` transforms mesh UV coordinates to atlas coordinates:
+- `scale_xy`: Size of mesh's region in atlas (0.0-1.0)
+- `bias_xy`: Offset/position in atlas (0.0-1.0)
+
+**Implementation Approach**:
+
+| Phase | Approach | Notes |
+|-------|----------|-------|
+| **Phase 1: Import Only** | Read existing baked data, display in editor | No re-baking, read-only lightmaps |
+| **Phase 2: CPU Baking** | Software raytracer for light grid + shadows | Slow but portable, good for small maps |
+| **Phase 3: GPU Baking** | WebGPU/wgpu compute shaders | Fast, handles full SR-sized maps |
+
+**CPU Baking (Phase 2)**:
+
+```rust
+// Pseudocode for light grid baking
+fn bake_light_grid(map: &Map, settings: &BakeSettings) -> LightGrid {
+    let grid_size = 256;
+    let cell_size = map.bounds.size() / grid_size as f32;
+    
+    let mut probes = Vec::with_capacity(grid_size * grid_size);
+    
+    for z in 0..grid_size {
+        for x in 0..grid_size {
+            let world_pos = map.bounds.min + Vec3::new(
+                x as f32 * cell_size.x,
+                0.0, // Sample at ground level
+                z as f32 * cell_size.z,
+            );
+            
+            // Trace rays in hemisphere above probe
+            let sh_coeffs = trace_hemisphere_to_sh(
+                world_pos,
+                &map.geometry,
+                &settings.sun,
+                &settings.sky_color,
+            );
+            
+            probes.push(LightProbe { position: world_pos, sh: sh_coeffs });
+        }
+    }
+    
+    LightGrid::from_probes(probes)
+}
+```
+
+**Shadow Atlas Packing**:
+
+```rust
+// Pseudocode for shadow atlas packing
+fn pack_shadow_atlas(meshes: &[Mesh], atlas_size: u32) -> ShadowAtlas {
+    // Sort meshes by shadow map area (largest first)
+    let mut sorted: Vec<_> = meshes.iter()
+        .map(|m| (m, estimate_shadow_area(m)))
+        .collect();
+    sorted.sort_by(|a, b| b.1.cmp(&a.1));
+    
+    let mut packer = RectPacker::new(atlas_size, atlas_size);
+    let mut atlas = ShadowAtlas::new(atlas_size);
+    
+    for (mesh, _) in sorted {
+        if let Some(rect) = packer.pack(mesh.shadow_width, mesh.shadow_height) {
+            // Render shadow map for this mesh
+            let shadow = render_mesh_shadow(mesh, &lights);
+            atlas.blit(shadow, rect);
+            
+            // Calculate UV transform
+            atlas.set_uv_mapping(mesh.name_hash, UvMapping {
+                scale: Vec2::new(
+                    rect.width as f32 / atlas_size as f32,
+                    rect.height as f32 / atlas_size as f32,
+                ),
+                bias: Vec2::new(
+                    rect.x as f32 / atlas_size as f32,
+                    rect.y as f32 / atlas_size as f32,
+                ),
+            });
+        }
+    }
+    
+    atlas
+}
+```
+
+**Bake Settings UI**:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────┐
+│  Lightmap Baking                                                            │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                             │
+│  Light Grid                           Shadow Atlas                          │
+│  ──────────                           ────────────                          │
+│  Grid Size:     [256 ▼]               Atlas Size:     [2048 ▼]             │
+│  Sample Count:  [64  ▼]               Padding:        [2    ] px           │
+│  Bounce Count:  [2   ▼]               Filter Radius:  [1.0  ]              │
+│                                                                             │
+│  Sun Settings (from MapSunProperties)                                       │
+│  ────────────────────────────────────                                       │
+│  Direction:     [-0.217, 0.790, 0.574]  [Pick from Scene]                  │
+│  Color:         [████████] #FFF4C8                                          │
+│  Intensity:     [0.2    ]                                                   │
+│  Shadow Radius: [5.0    ]                                                   │
+│                                                                             │
+│  ┌───────────────────────────────────────────────────────────────────────┐ │
+│  │ Preview: [Light Grid ▼]                                                │ │
+│  │                                                                        │ │
+│  │  ┌──────────────────────────────────────────────────────────────────┐ │ │
+│  │  │                                                                  │ │ │
+│  │  │     [3D viewport with probe visualization / shadow preview]     │ │ │
+│  │  │                                                                  │ │ │
+│  │  └──────────────────────────────────────────────────────────────────┘ │ │
+│  └───────────────────────────────────────────────────────────────────────┘ │
+│                                                                             │
+│  Output: /layers/base/ASSETS/Maps/Lightmaps/...                             │
+│                                                                             │
+│  [Bake Light Grid]  [Bake Shadows]  [Bake All]          Progress: [██████░░] │
+│                                                                             │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Output Files Generated**:
+
+```
+layers/base/ASSETS/Maps/Lightmaps/Maps/MapGeometry/{MapName}/Base/
+├── LightGrid.{Variant}_CubemapProbe.dat
+├── LightGrid_array_1_of_8.{Variant}_CubemapProbe.tex
+├── LightGrid_array_2_of_8.{Variant}_CubemapProbe.tex
+├── ... (up to 8)
+├── StationaryShadows_0.{Variant}.tex
+└── StationaryShadows_1.{Variant}.tex (if needed)
+```
+
+Plus `MapBakeProperties` entries in `materials.bin`:
+- `lightGridFileName`, `RmaStaticLightGridTexturePath`
+- `MapPerInstanceInfo` per mesh with shadow UV mappings
+- `StationaryLightChannelAssignments`
+
+**Open Questions for Lightmap Baking**:
+
+1. **Accuracy vs Speed**: How close to Riot's baking do we need to be?
+2. **GPU Backend**: Use wgpu for compute, or leverage Three.js WebGL for preview-quality?
+3. **Incremental Baking**: Re-bake only affected probes when geometry changes?
+4. **Light Grid Format**: Reverse-engineer exact `.dat` format
 
 ### VFX/Particle Editor
 
@@ -776,7 +1119,21 @@ interface EnvironmentMesh {
 
 **Deliverable**: Can modify and save map changes
 
-### Phase 5: Build Integration
+### Phase 5: Lightmap Baking
+
+**Goal**: Re-bake lighting when geometry/lighting changes
+
+- [ ] Light grid probe visualization
+- [ ] Shadow atlas preview
+- [ ] CPU-based light grid baking (software raytracer)
+- [ ] Shadow atlas packing algorithm
+- [ ] MapBakeProperties generation
+- [ ] Export to game-compatible format (.dat, .tex)
+- [ ] Bake settings UI (grid size, sample count, sun settings)
+
+**Deliverable**: Modified maps have correct baked lighting
+
+### Phase 6: Build Integration
 
 **Goal**: Seamless build workflow
 
@@ -787,7 +1144,7 @@ interface EnvironmentMesh {
 
 **Deliverable**: Build mods directly from editor
 
-### Phase 6: VFX Editor
+### Phase 7: VFX Editor
 
 **Goal**: Particle system editing
 
@@ -800,7 +1157,7 @@ interface EnvironmentMesh {
 
 **Deliverable**: Create and edit VFX
 
-### Phase 7: Polish & Advanced Features
+### Phase 8: Polish & Advanced Features
 
 - [ ] Multi-viewport layouts
 - [ ] Plugin system
@@ -861,6 +1218,7 @@ interface EnvironmentMesh {
 - [league-toolkit Rust Crates](https://github.com/LeagueToolkit/league-toolkit)
 - [league-mod CLI](https://github.com/LeagueToolkit/league-mod)
 - [MapGeometry Issue #85](https://github.com/LeagueToolkit/league-toolkit/issues/85)
+- [LoL Meta Wiki - Class Reference](https://meta-wiki.leaguetoolkit.dev/classes/mapcontainer/)
 - [Tauri Documentation](https://tauri.app/)
 - [React Three Fiber](https://docs.pmnd.rs/react-three-fiber)
 
