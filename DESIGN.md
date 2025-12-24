@@ -55,22 +55,22 @@ Reference: [Riot's Particle Town Article](https://nexus.leagueoflegends.com/en-u
 
 ### Goals
 
-| Goal | Description |
-|------|-------------|
-| **Live Preview** | See changes immediately without launching the game |
-| **Project-Based Workflow** | Work with `league-mod` project structure natively |
-| **Integrated Toolchain** | Build mods directly from the editor |
-| **Accessible** | Lower the barrier to entry for new modders |
-| **Extensible** | Plugin/transformer system for custom workflows |
+| Goal                       | Description                                        |
+| -------------------------- | -------------------------------------------------- |
+| **Live Preview**           | See changes immediately without launching the game |
+| **Project-Based Workflow** | Work with `league-mod` project structure natively  |
+| **Integrated Toolchain**   | Build mods directly from the editor                |
+| **Accessible**             | Lower the barrier to entry for new modders         |
+| **Extensible**             | Plugin/transformer system for custom workflows     |
 
 ### Non-Goals
 
-| Non-Goal | Rationale |
-|----------|-----------|
-| **Full Game Recreation** | We approximate rendering, not replicate it exactly |
-| **Gameplay Editing** | Focus on assets, not game logic/scripting |
-| **Replace Blender** | Complex modeling still done externally; we handle League-specific formats |
-| **WAD Browser** | Obsidian handles this; Forge focuses on editing |
+| Non-Goal                 | Rationale                                                                 |
+| ------------------------ | ------------------------------------------------------------------------- |
+| **Full Game Recreation** | We approximate rendering, not replicate it exactly                        |
+| **Gameplay Editing**     | Focus on assets, not game logic/scripting                                 |
+| **Replace Blender**      | Complex modeling still done externally; we handle League-specific formats |
+| **WAD Browser**          | Obsidian handles this; Forge focuses on editing                           |
 
 ---
 
@@ -113,15 +113,15 @@ Reference: [Riot's Particle Town Article](https://nexus.leagueoflegends.com/en-u
 
 ### Technology Stack
 
-| Layer | Technology | Rationale |
-|-------|------------|-----------|
-| **Framework** | Tauri 2.0 | Native performance, Rust backend, small bundle |
-| **Frontend** | React 18 + TypeScript | Component model, ecosystem, type safety |
-| **3D Rendering** | Three.js + @react-three/fiber | WebGL, React integration, mature ecosystem |
-| **UI Components** | Radix UI + Tailwind | Accessible primitives, utility-first styling |
-| **State Management** | Zustand + Immer | Lightweight, immutable updates for undo/redo |
-| **Layout** | Allotment / react-mosaic | Resizable panels, dockable windows |
-| **Backend** | Rust | Performance, memory safety, shared with ltk_* |
+| Layer                | Technology                    | Rationale                                       |
+| -------------------- | ----------------------------- | ----------------------------------------------- |
+| **Framework**        | Tauri 2.0                     | Native performance, Rust backend, small bundle  |
+| **Frontend**         | React 18 + TypeScript         | Component model, ecosystem, type safety         |
+| **3D Rendering**     | Three.js + @react-three/fiber | WebGL, React integration, mature ecosystem      |
+| **UI Components**    | Radix UI + Tailwind           | Accessible primitives, utility-first styling    |
+| **State Management** | Zustand + Immer               | Lightweight, immutable updates for undo/redo    |
+| **Layout**           | Allotment / react-mosaic      | Resizable panels, dockable windows              |
+| **Backend**          | Rust                          | Performance, memory safety, shared with ltk\_\* |
 
 ### Data Flow
 
@@ -255,49 +255,49 @@ league_mod_core::pack(config, options)?;
 
 ### 1. Project Management
 
-| Feature | Description |
-|---------|-------------|
-| Create Project | Initialize new mod project via wizard |
-| Open Project | Load existing `mod.config.toml` |
-| Project Settings | Edit metadata, layers, transformers |
-| Recent Projects | Quick access to recent work |
-| Game Path Config | Configure League installation path |
+| Feature          | Description                           |
+| ---------------- | ------------------------------------- |
+| Create Project   | Initialize new mod project via wizard |
+| Open Project     | Load existing `mod.config.toml`       |
+| Project Settings | Edit metadata, layers, transformers   |
+| Recent Projects  | Quick access to recent work           |
+| Game Path Config | Configure League installation path    |
 
 ### 2. Asset Browser
 
-| Feature | Description |
-|---------|-------------|
-| Layer View | Browse files organized by layer |
-| Game Assets | Browse original game files (read-only) |
-| Search | Find assets by path or hash |
-| Preview | Quick preview thumbnails |
+| Feature      | Description                               |
+| ------------ | ----------------------------------------- |
+| Layer View   | Browse files organized by layer           |
+| Game Assets  | Browse original game files (read-only)    |
+| Search       | Find assets by path or hash               |
+| Preview      | Quick preview thumbnails                  |
 | Context Menu | Open in editor, show in folder, copy path |
 
 ### 3. Asset Resolution
 
-| Feature | Description |
-|---------|-------------|
-| Layer Priority | Higher priority layers override lower |
-| Game Fallback | Use original game assets if not overridden |
-| Conflict Detection | Warn when multiple layers modify same file |
-| Dependency Tracking | Track which files reference which |
+| Feature             | Description                                |
+| ------------------- | ------------------------------------------ |
+| Layer Priority      | Higher priority layers override lower      |
+| Game Fallback       | Use original game assets if not overridden |
+| Conflict Detection  | Warn when multiple layers modify same file |
+| Dependency Tracking | Track which files reference which          |
 
 ### 4. Build System
 
-| Feature | Description |
-|---------|-------------|
-| Build Project | Invoke `league-mod pack` |
-| Build Output | Show build log, errors, warnings |
-| Hot Reload | Rebuild on file changes (optional) |
+| Feature        | Description                        |
+| -------------- | ---------------------------------- |
+| Build Project  | Invoke `league-mod pack`           |
+| Build Output   | Show build log, errors, warnings   |
+| Hot Reload     | Rebuild on file changes (optional) |
 | Export Formats | .modpkg, .fantome, raw WAD overlay |
 
 ### 5. Undo/Redo
 
-| Feature | Description |
-|---------|-------------|
-| Command Pattern | All edits are reversible commands |
-| History Panel | View and navigate edit history |
-| Per-Document | Each open file has its own history |
+| Feature         | Description                        |
+| --------------- | ---------------------------------- |
+| Command Pattern | All edits are reversible commands  |
+| History Panel   | View and navigate edit history     |
+| Per-Document    | Each open file has its own history |
 
 ---
 
@@ -336,24 +336,24 @@ league_mod_core::pack(config, options)?;
 
 **Capabilities**:
 
-| Feature | Description |
-|---------|-------------|
-| View Map | Load and render `.mapgeo` files |
-| Select Meshes | Click to select, multi-select with Shift |
-| Transform | Move, rotate, scale with gizmos |
-| Edit Properties | Visibility flags, material, lightmap |
-| Bucket Visualization | Debug view of spatial bucketing |
-| Add/Remove Meshes | Insert props, delete geometry |
-| Save | Write modified `.mapgeo` + `materials.bin` to layer |
+| Feature              | Description                                         |
+| -------------------- | --------------------------------------------------- |
+| View Map             | Load and render `.mapgeo` files                     |
+| Select Meshes        | Click to select, multi-select with Shift            |
+| Transform            | Move, rotate, scale with gizmos                     |
+| Edit Properties      | Visibility flags, material, lightmap                |
+| Bucket Visualization | Debug view of spatial bucketing                     |
+| Add/Remove Meshes    | Insert props, delete geometry                       |
+| Save                 | Write modified `.mapgeo` + `materials.bin` to layer |
 
 #### Map Data Architecture
 
 A League map consists of two primary files:
 
-| File | Purpose |
-|------|---------|
-| `.mapgeo` | Binary 3D geometry (vertices, indices, UV mappings, transforms, spatial buckets) |
-| `materials.bin` | Serialized map data (materials, map objects, components, properties) |
+| File            | Purpose                                                                          |
+| --------------- | -------------------------------------------------------------------------------- |
+| `.mapgeo`       | Binary 3D geometry (vertices, indices, UV mappings, transforms, spatial buckets) |
+| `materials.bin` | Serialized map data (materials, map objects, components, properties)             |
 
 The `materials.bin` file uses the property bin format and contains a [`MapContainer`](https://meta-wiki.leaguetoolkit.dev/classes/mapcontainer/) as its main entry point:
 
@@ -387,7 +387,7 @@ See: [MapComponent](https://meta-wiki.leaguetoolkit.dev/classes/mapcomponent/) |
     mapPath: string = "Maps/MapGeometry/Map35/Base"
     boundsMax: vec2 = { 7000, 7000 }
     lowestWalkableHeight: f32 = -100
-    
+
     components: [
         MapBakeProperties {
             lightGridSize: u32 = 256
@@ -409,7 +409,7 @@ See: [MapComponent](https://meta-wiki.leaguetoolkit.dev/classes/mapcomponent/) |
             texturePath: "ASSETS/Maps/Info/Map35/Minimap7.Brawl.tex"
         }
     ]
-    
+
     chunks: {
         "Default"   -> MapPlaceableContainer  // Main static geometry
         "Ground"    -> MapPlaceableContainer  // Terrain meshes
@@ -429,18 +429,18 @@ flowchart LR
         MAPGEO[".mapgeo<br/>(Geometry)"]
         MATBIN["materials.bin<br/>(Properties)"]
     end
-    
+
     subgraph Forge["LTK Forge Editor"]
         PARSE["Parse & Load"]
         EDIT["Edit Scene"]
         RENDER["3D Viewport"]
     end
-    
+
     subgraph Output["Baked Output"]
         OUT_MAPGEO[".mapgeo"]
         OUT_BIN["materials.bin"]
     end
-    
+
     MAPGEO --> PARSE
     MATBIN --> PARSE
     PARSE --> EDIT
@@ -464,11 +464,11 @@ When modifying map geometry or lighting, lightmaps must be re-baked to produce c
 
 **Baked Lighting Components**:
 
-| Component | Description | Output |
-|-----------|-------------|--------|
-| **Light Grid** | 3D grid of lighting probes for dynamic objects (characters) | `LightGrid.dat` + texture arrays |
-| **Shadow Atlas** | Baked shadows from stationary lights, packed per-mesh | `StationaryShadows_N.tex` |
-| **Per-Mesh UV Mapping** | Scale/bias to map mesh UVs to shadow atlas regions | `MapPerInstanceInfo` in `.bin` |
+| Component               | Description                                                 | Output                           |
+| ----------------------- | ----------------------------------------------------------- | -------------------------------- |
+| **Light Grid**          | 3D grid of lighting probes for dynamic objects (characters) | `LightGrid.dat` + texture arrays |
+| **Shadow Atlas**        | Baked shadows from stationary lights, packed per-mesh       | `StationaryShadows_N.tex`        |
+| **Per-Mesh UV Mapping** | Scale/bias to map mesh UVs to shadow atlas regions          | `MapPerInstanceInfo` in `.bin`   |
 
 **Light Grid Baking Pipeline**:
 
@@ -479,22 +479,22 @@ flowchart TD
         SUN["Sun Properties"]
         LIGHTS["Stationary Lights"]
     end
-    
+
     subgraph Probe["Probe Capture"]
         GRID["Generate 256×256 Probe Grid"]
         HEMI["Render Hemisphere/Cubemap at Each Probe"]
     end
-    
+
     subgraph Compress["Compression"]
         SH["Compress to Spherical Harmonics"]
         TEX["Pack into Texture Arrays (8 slices)"]
     end
-    
+
     subgraph Output["Output Files"]
         DAT["LightGrid.dat<br/>(probe metadata)"]
         TEXOUT["LightGrid_array_N_of_8.tex<br/>(SH coefficients)"]
     end
-    
+
     GEOM --> GRID
     SUN --> HEMI
     LIGHTS --> HEMI
@@ -513,23 +513,23 @@ flowchart TD
         MESHES["Static Meshes"]
         LIGHTS2["Stationary Lights"]
     end
-    
+
     subgraph Render["Shadow Rendering"]
         SHADOW["Render Shadow Map per Light"]
         UNWRAP["UV Unwrap Each Mesh (texcoord1)"]
     end
-    
+
     subgraph Pack["Atlas Packing"]
         RECT["Rectangle Bin-Packing Algorithm"]
         ATLAS["Composite into Atlas Texture"]
         UVMAP["Calculate UV Scale/Bias per Mesh"]
     end
-    
+
     subgraph Output["Output"]
         SHADOWTEX["StationaryShadows_N.tex"]
         BINDATA["MapPerInstanceInfo entries"]
     end
-    
+
     MESHES --> SHADOW
     LIGHTS2 --> SHADOW
     MESHES --> UNWRAP
@@ -551,16 +551,17 @@ flowchart TD
 ```
 
 The `shadowMapUVScaleAndBias` transforms mesh UV coordinates to atlas coordinates:
+
 - `scale_xy`: Size of mesh's region in atlas (0.0-1.0)
 - `bias_xy`: Offset/position in atlas (0.0-1.0)
 
 **Implementation Approach**:
 
-| Phase | Approach | Notes |
-|-------|----------|-------|
-| **Phase 1: Import Only** | Read existing baked data, display in editor | No re-baking, read-only lightmaps |
-| **Phase 2: CPU Baking** | Software raytracer for light grid + shadows | Slow but portable, good for small maps |
-| **Phase 3: GPU Baking** | WebGPU/wgpu compute shaders | Fast, handles full SR-sized maps |
+| Phase                    | Approach                                    | Notes                                  |
+| ------------------------ | ------------------------------------------- | -------------------------------------- |
+| **Phase 1: Import Only** | Read existing baked data, display in editor | No re-baking, read-only lightmaps      |
+| **Phase 2: CPU Baking**  | Software raytracer for light grid + shadows | Slow but portable, good for small maps |
+| **Phase 3: GPU Baking**  | WebGPU/wgpu compute shaders                 | Fast, handles full SR-sized maps       |
 
 **CPU Baking (Phase 2)**:
 
@@ -569,9 +570,9 @@ The `shadowMapUVScaleAndBias` transforms mesh UV coordinates to atlas coordinate
 fn bake_light_grid(map: &Map, settings: &BakeSettings) -> LightGrid {
     let grid_size = 256;
     let cell_size = map.bounds.size() / grid_size as f32;
-    
+
     let mut probes = Vec::with_capacity(grid_size * grid_size);
-    
+
     for z in 0..grid_size {
         for x in 0..grid_size {
             let world_pos = map.bounds.min + Vec3::new(
@@ -579,7 +580,7 @@ fn bake_light_grid(map: &Map, settings: &BakeSettings) -> LightGrid {
                 0.0, // Sample at ground level
                 z as f32 * cell_size.z,
             );
-            
+
             // Trace rays in hemisphere above probe
             let sh_coeffs = trace_hemisphere_to_sh(
                 world_pos,
@@ -587,11 +588,11 @@ fn bake_light_grid(map: &Map, settings: &BakeSettings) -> LightGrid {
                 &settings.sun,
                 &settings.sky_color,
             );
-            
+
             probes.push(LightProbe { position: world_pos, sh: sh_coeffs });
         }
     }
-    
+
     LightGrid::from_probes(probes)
 }
 ```
@@ -606,16 +607,16 @@ fn pack_shadow_atlas(meshes: &[Mesh], atlas_size: u32) -> ShadowAtlas {
         .map(|m| (m, estimate_shadow_area(m)))
         .collect();
     sorted.sort_by(|a, b| b.1.cmp(&a.1));
-    
+
     let mut packer = RectPacker::new(atlas_size, atlas_size);
     let mut atlas = ShadowAtlas::new(atlas_size);
-    
+
     for (mesh, _) in sorted {
         if let Some(rect) = packer.pack(mesh.shadow_width, mesh.shadow_height) {
             // Render shadow map for this mesh
             let shadow = render_mesh_shadow(mesh, &lights);
             atlas.blit(shadow, rect);
-            
+
             // Calculate UV transform
             atlas.set_uv_mapping(mesh.name_hash, UvMapping {
                 scale: Vec2::new(
@@ -629,7 +630,7 @@ fn pack_shadow_atlas(meshes: &[Mesh], atlas_size: u32) -> ShadowAtlas {
             });
         }
     }
-    
+
     atlas
 }
 ```
@@ -684,6 +685,7 @@ layers/base/ASSETS/Maps/Lightmaps/Maps/MapGeometry/{MapName}/Base/
 ```
 
 Plus `MapBakeProperties` entries in `materials.bin`:
+
 - `lightGridFileName`, `RmaStaticLightGridTexturePath`
 - `MapPerInstanceInfo` per mesh with shadow UV mappings
 - `StationaryLightChannelAssignments`
@@ -729,15 +731,15 @@ Plus `MapBakeProperties` entries in `materials.bin`:
 
 **Capabilities**:
 
-| Feature | Description |
-|---------|-------------|
-| Load VFX | Parse particle definitions from `.bin` |
-| Live Preview | Real-time particle simulation |
-| Edit Properties | Birth rate, lifetime, velocity, etc. |
-| Curve Editor | Edit value-over-lifetime curves |
-| Gradient Editor | Edit color gradients |
-| Playback Controls | Play, pause, speed, scrub timeline |
-| Save | Write modified particle definition |
+| Feature           | Description                            |
+| ----------------- | -------------------------------------- |
+| Load VFX          | Parse particle definitions from `.bin` |
+| Live Preview      | Real-time particle simulation          |
+| Edit Properties   | Birth rate, lifetime, velocity, etc.   |
+| Curve Editor      | Edit value-over-lifetime curves        |
+| Gradient Editor   | Edit color gradients                   |
+| Playback Controls | Play, pause, speed, scrub timeline     |
+| Save              | Write modified particle definition     |
 
 **Technical Notes**:
 
@@ -777,15 +779,15 @@ Plus `MapBakeProperties` entries in `materials.bin`:
 
 **Capabilities**:
 
-| Feature | Description |
-|---------|-------------|
-| Load Models | `.skn` (skinned), `.scb`/`.sco` (static) |
-| Load Skeleton | `.skl` skeleton files |
-| Load Animations | `.anm` animation files |
-| Playback | Play, pause, scrub animations |
-| Bone Visualization | Show skeleton overlay |
-| Material Preview | Basic material rendering |
-| Export | Export to glTF/glb for external tools |
+| Feature            | Description                              |
+| ------------------ | ---------------------------------------- |
+| Load Models        | `.skn` (skinned), `.scb`/`.sco` (static) |
+| Load Skeleton      | `.skl` skeleton files                    |
+| Load Animations    | `.anm` animation files                   |
+| Playback           | Play, pause, scrub animations            |
+| Bone Visualization | Show skeleton overlay                    |
+| Material Preview   | Basic material rendering                 |
+| Export             | Export to glTF/glb for external tools    |
 
 **Technical Notes**:
 
@@ -800,12 +802,12 @@ Plus `MapBakeProperties` entries in `materials.bin`:
 
 **Capabilities**:
 
-| Feature | Description |
-|---------|-------------|
-| View Textures | `.tex`, `.dds`, `.png` |
-| Channel View | RGB, R, G, B, Alpha individual |
-| Mipmap View | View different mip levels |
-| Metadata | Format, dimensions, compression |
+| Feature       | Description                     |
+| ------------- | ------------------------------- |
+| View Textures | `.tex`, `.dds`, `.png`          |
+| Channel View  | RGB, R, G, B, Alpha individual  |
+| Mipmap View   | View different mip levels       |
+| Metadata      | Format, dimensions, compression |
 
 ---
 
@@ -856,16 +858,16 @@ The UI follows a workstation/IDE paradigm with dockable panels:
 
 ### Keyboard Shortcuts
 
-| Action | Shortcut |
-|--------|----------|
-| Save | Ctrl+S |
-| Undo | Ctrl+Z |
-| Redo | Ctrl+Shift+Z |
-| Delete | Delete |
-| Duplicate | Ctrl+D |
-| Focus Selection | F |
-| Toggle Wireframe | Z |
-| Build Project | Ctrl+B |
+| Action           | Shortcut     |
+| ---------------- | ------------ |
+| Save             | Ctrl+S       |
+| Undo             | Ctrl+Z       |
+| Redo             | Ctrl+Shift+Z |
+| Delete           | Delete       |
+| Duplicate        | Ctrl+D       |
+| Focus Selection  | F            |
+| Toggle Wireframe | Z            |
+| Build Project    | Ctrl+B       |
 
 ---
 
@@ -987,25 +989,25 @@ notify = "6"                    # File watching
     "@tauri-apps/api": "^2",
     "@tauri-apps/plugin-dialog": "^2",
     "@tauri-apps/plugin-shell": "^2",
-    
+
     "react": "^18",
     "react-dom": "^18",
-    
+
     "@react-three/fiber": "^8",
     "@react-three/drei": "^9",
     "three": "^0.160",
-    
+
     "zustand": "^4",
     "immer": "^10",
-    
+
     "@radix-ui/react-context-menu": "^2",
     "@radix-ui/react-dropdown-menu": "^2",
     "@radix-ui/react-tabs": "^1",
     "@radix-ui/react-tooltip": "^1",
-    
+
     "allotment": "^1",
     "react-arborist": "^3",
-    
+
     "tailwindcss": "^3",
     "clsx": "^2"
   },
@@ -1024,8 +1026,8 @@ Commands follow a request/response pattern:
 
 ```typescript
 // Frontend calls
-const mapData = await invoke<MapData>('load_map', { 
-  path: 'data/maps/mapgeometry/sr/base.mapgeo' 
+const mapData = await invoke<MapData>('load_map', {
+  path: 'data/maps/mapgeometry/sr/base.mapgeo'
 });
 
 // Backend handler
@@ -1053,13 +1055,13 @@ interface MapData {
 interface EnvironmentMesh {
   id: number;
   name: string;
-  
+
   // ArrayBuffer for efficient transfer
-  positions: ArrayBuffer;  // Float32Array
+  positions: ArrayBuffer; // Float32Array
   normals: ArrayBuffer;
   uvs: ArrayBuffer[];
-  indices: ArrayBuffer;    // Uint16Array
-  
+  indices: ArrayBuffer; // Uint16Array
+
   boundingBox: AABB;
   materialPath: string;
   visibility: number;
@@ -1175,7 +1177,6 @@ interface EnvironmentMesh {
 1. **Material Rendering**: How accurately should we replicate League's shaders?
    - Option A: Simplified PBR approximation
    - Option B: Custom shaders matching League's pipeline
-   
 2. **Large Map Performance**: How to handle maps with thousands of meshes?
    - LOD system?
    - Frustum culling in editor?
@@ -1224,6 +1225,5 @@ interface EnvironmentMesh {
 
 ---
 
-*Document Version: 1.0*  
-*Last Updated: December 2025*
-
+_Document Version: 1.0_  
+_Last Updated: December 2025_

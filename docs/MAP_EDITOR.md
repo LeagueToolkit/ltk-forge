@@ -50,23 +50,23 @@ flowchart LR
 
 ### Key Concepts
 
-| Concept | Description |
-|---------|-------------|
-| **Map Project** | Source-of-truth project file (`.ltkmap`) containing all references and transforms |
-| **Source Mesh** | Imported 3D file (glb/obj/fbx) - editable, not game-ready |
-| **Static Environment Mesh** | Baked mesh in `.mapgeo` - terrain, rocks, static props (no runtime behavior) |
-| **Map Object** | Dynamic entity from `.bin` (MapPlaceable) - turrets, buildings, animated props (runtime behavior) |
-| **Material Definition** | `.bin` file describing shaders and textures |
-| **Baking** | Process of converting project to game-ready `.mapgeo` + `.bin` files |
+| Concept                     | Description                                                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------- |
+| **Map Project**             | Source-of-truth project file (`.ltkmap`) containing all references and transforms                 |
+| **Source Mesh**             | Imported 3D file (glb/obj/fbx) - editable, not game-ready                                         |
+| **Static Environment Mesh** | Baked mesh in `.mapgeo` - terrain, rocks, static props (no runtime behavior)                      |
+| **Map Object**              | Dynamic entity from `.bin` (MapPlaceable) - turrets, buildings, animated props (runtime behavior) |
+| **Material Definition**     | `.bin` file describing shaders and textures                                                       |
+| **Baking**                  | Process of converting project to game-ready `.mapgeo` + `.bin` files                              |
 
 ### Static vs Dynamic Content
 
-| Aspect | Static (Environment Meshes) | Dynamic (Map Objects) |
-|--------|-----------------------------|-----------------------|
-| **Storage** | `.mapgeo` | `.bin` |
-| **Examples** | Terrain, cliffs, rocks, trees | Turrets, inhibitors, shopkeepers |
-| **Processing** | Baked, optimized, bucketed | Loaded as game entities |
-| **Runtime** | No changes | Can animate, die, respawn |
+| Aspect         | Static (Environment Meshes)   | Dynamic (Map Objects)            |
+| -------------- | ----------------------------- | -------------------------------- |
+| **Storage**    | `.mapgeo`                     | `.bin`                           |
+| **Examples**   | Terrain, cliffs, rocks, trees | Turrets, inhibitors, shopkeepers |
+| **Processing** | Baked, optimized, bucketed    | Loaded as game entities          |
+| **Runtime**    | No changes                    | Can animate, die, respawn        |
 
 ---
 
@@ -357,30 +357,30 @@ flowchart LR
 
 ### Supported Import Formats
 
-| Format | Extension | Notes |
-|--------|-----------|-------|
-| glTF Binary | `.glb` | **Recommended** - Full scene support |
-| glTF | `.gltf` + `.bin` | Separate files |
-| Wavefront OBJ | `.obj` | Geometry only, no hierarchy |
-| FBX | `.fbx` | Autodesk format |
-| Existing MapGeo | `.mapgeo` | Import existing League maps |
+| Format          | Extension        | Notes                                |
+| --------------- | ---------------- | ------------------------------------ |
+| glTF Binary     | `.glb`           | **Recommended** - Full scene support |
+| glTF            | `.gltf` + `.bin` | Separate files                       |
+| Wavefront OBJ   | `.obj`           | Geometry only, no hierarchy          |
+| FBX             | `.fbx`           | Autodesk format                      |
+| Existing MapGeo | `.mapgeo`        | Import existing League maps          |
 
 ### Import Options
 
 ```typescript
 interface MeshImportOptions {
   // Transform applied on import
-  scale: number;           // Default: 1.0
-  upAxis: 'Y' | 'Z';       // Default: 'Y'
-  
+  scale: number; // Default: 1.0
+  upAxis: 'Y' | 'Z'; // Default: 'Y'
+
   // Geometry processing
-  mergeByMaterial: boolean;  // Combine meshes with same material
-  generateNormals: boolean;  // Recalculate if missing
+  mergeByMaterial: boolean; // Combine meshes with same material
+  generateNormals: boolean; // Recalculate if missing
   generateTangents: boolean; // For normal mapping
-  
+
   // Material handling
-  importMaterials: boolean;  // Create material stubs from imported data
-  textureFolder: string;     // Where to place extracted textures
+  importMaterials: boolean; // Create material stubs from imported data
+  textureFolder: string; // Where to place extracted textures
 }
 ```
 
@@ -419,39 +419,39 @@ The 3D viewport is the primary editing interface:
 
 ### Gizmo System
 
-| Gizmo | Shortcut | Description |
-|-------|----------|-------------|
-| **Translate** | W | Move along axes |
-| **Rotate** | E | Rotate around axes |
-| **Scale** | R | Scale along axes |
-| **Universal** | T | Combined transform |
+| Gizmo         | Shortcut | Description        |
+| ------------- | -------- | ------------------ |
+| **Translate** | W        | Move along axes    |
+| **Rotate**    | E        | Rotate around axes |
+| **Scale**     | R        | Scale along axes   |
+| **Universal** | T        | Combined transform |
 
 #### Gizmo Modes
 
-| Mode | Description |
-|------|-------------|
+| Mode      | Description                        |
+| --------- | ---------------------------------- |
 | **Local** | Gizmo aligned to object's rotation |
-| **World** | Gizmo aligned to world axes |
-| **View** | Gizmo aligned to camera |
+| **World** | Gizmo aligned to world axes        |
+| **View**  | Gizmo aligned to camera            |
 
 #### Snapping
 
-| Snap Type | Values |
-|-----------|--------|
+| Snap Type    | Values                      |
+| ------------ | --------------------------- |
 | **Position** | 1, 5, 10, 25, 50, 100 units |
-| **Rotation** | 5°, 15°, 45°, 90° |
-| **Scale** | 0.1, 0.25, 0.5, 1.0 |
+| **Rotation** | 5°, 15°, 45°, 90°           |
+| **Scale**    | 0.1, 0.25, 0.5, 1.0         |
 
 ### Selection
 
-| Action | Input |
-|--------|-------|
-| Select | Left Click |
-| Multi-select | Ctrl + Click |
-| Box Select | Drag (with select tool) |
-| Deselect All | Escape |
-| Select All | Ctrl + A |
-| Invert Selection | Ctrl + I |
+| Action           | Input                   |
+| ---------------- | ----------------------- |
+| Select           | Left Click              |
+| Multi-select     | Ctrl + Click            |
+| Box Select       | Drag (with select tool) |
+| Deselect All     | Escape                  |
+| Select All       | Ctrl + A                |
+| Invert Selection | Ctrl + I                |
 
 ### Scene Hierarchy
 
@@ -613,13 +613,13 @@ alpha_test_threshold = 0.5  # If blend_mode = "alpha_test"
 
 ### Shader Types
 
-| Shader | Use Case |
-|--------|----------|
-| `Environment_Base` | Standard terrain and props |
-| `Environment_Foliage` | Trees, grass with wind animation |
-| `Environment_Water` | Water surfaces |
-| `Environment_Emissive` | Glowing objects |
-| `Environment_Masked` | Alpha-tested cutouts |
+| Shader                 | Use Case                         |
+| ---------------------- | -------------------------------- |
+| `Environment_Base`     | Standard terrain and props       |
+| `Environment_Foliage`  | Trees, grass with wind animation |
+| `Environment_Water`    | Water surfaces                   |
+| `Environment_Emissive` | Glowing objects                  |
+| `Environment_Masked`   | Alpha-tested cutouts             |
 
 ---
 
@@ -662,13 +662,14 @@ VFX are placed as reference points in the map:
 ### VFX in Viewport
 
 VFX are displayed with:
+
 - **Billboard icon** when not selected (performance)
 - **Live preview** when selected (optional)
 - **Bounding volume** for transform gizmos
 
 ```
      ✨  ← VFX icon (unselected)
-    
+
     ╭────────────╮
     │ ≋≋ VFX ≋≋  │ ← Live preview (selected)
     │   ≋≋≋≋≋    │
@@ -681,22 +682,22 @@ VFX are displayed with:
 
 League of Legends maps distinguish between two fundamentally different types of content:
 
-| | Static Environment Meshes | Dynamic Map Objects |
-|---|---|---|
-| **Storage** | `.mapgeo` | `.bin` (MapPlaceable) |
-| **Content** | Terrain, rocks, static props | Buildings, animated props |
-| **Behavior** | No runtime behavior | Runtime behavior & animation |
-| **Rendering** | Spatially bucketed for culling | Loaded as game entities |
-| **Mutability** | Cannot be destroyed/modified | Can be destroyed, animated |
+|                | Static Environment Meshes      | Dynamic Map Objects          |
+| -------------- | ------------------------------ | ---------------------------- |
+| **Storage**    | `.mapgeo`                      | `.bin` (MapPlaceable)        |
+| **Content**    | Terrain, rocks, static props   | Buildings, animated props    |
+| **Behavior**   | No runtime behavior            | Runtime behavior & animation |
+| **Rendering**  | Spatially bucketed for culling | Loaded as game entities      |
+| **Mutability** | Cannot be destroyed/modified   | Can be destroyed, animated   |
 
 **Examples:**
 
-| Static | Dynamic |
-|--------|---------|
-| Ground terrain | Turrets (destroyable) |
-| Cliff walls | Inhibitors (respawn) |
-| Decorative rocks | Nexus |
-| Static foliage | Shopkeepers (animated) |
+| Static                | Dynamic                              |
+| --------------------- | ------------------------------------ |
+| Ground terrain        | Turrets (destroyable)                |
+| Cliff walls           | Inhibitors (respawn)                 |
+| Decorative rocks      | Nexus                                |
+| Static foliage        | Shopkeepers (animated)               |
 | Environmental details | Animated water wheels, map creatures |
 
 ### MapPlaceable Class Hierarchy
@@ -737,11 +738,11 @@ Reference: [GdsMapObject](https://meta-wiki.leaguetoolkit.dev/classes/gdsmapobje
 
 All `MapPlaceable` objects share common properties:
 
-| Property | Type | Description |
-|----------|------|-------------|
-| `Name` | String | Unique identifier |
-| `mVisibilityFlags` | U8 | Visibility layer bitmask (default: 255 = all) |
-| `Transform` | Mtx44 | 4x4 transformation matrix |
+| Property           | Type   | Description                                   |
+| ------------------ | ------ | --------------------------------------------- |
+| `Name`             | String | Unique identifier                             |
+| `mVisibilityFlags` | U8     | Visibility layer bitmask (default: 255 = all) |
+| `Transform`        | Mtx44  | 4x4 transformation matrix                     |
 
 ### GdsMapObject (Dynamic Props)
 
@@ -772,13 +773,13 @@ mCharacterName = "SRUAP_Turret_Order1"  # Character definition reference
 
 The editor handles both static and dynamic content:
 
-| Editor Type | Output Format | Game Behavior |
-|-------------|---------------|---------------|
-| **Static Mesh** | `.mapgeo` | Baked geometry, no runtime changes |
-| **Map Object** | `.bin` (MapPlaceable) | Dynamic entity, can animate/destroy |
-| **VFX Placement** | `.bin` (MapParticle) | Particle effect instance |
-| **Light** | `.bin` (MapPointLight/Spotlight) | Lighting source |
-| **Locator** | `.bin` (MapLocator) | Spawn points, markers |
+| Editor Type       | Output Format                    | Game Behavior                       |
+| ----------------- | -------------------------------- | ----------------------------------- |
+| **Static Mesh**   | `.mapgeo`                        | Baked geometry, no runtime changes  |
+| **Map Object**    | `.bin` (MapPlaceable)            | Dynamic entity, can animate/destroy |
+| **VFX Placement** | `.bin` (MapParticle)             | Particle effect instance            |
+| **Light**         | `.bin` (MapPointLight/Spotlight) | Lighting source                     |
+| **Locator**       | `.bin` (MapLocator)              | Spawn points, markers               |
 
 ### Placing Map Objects
 
@@ -870,7 +871,7 @@ build/
 
 The `map_objects.bin` contains serialized `MapPlaceable` instances:
 
-```
+````
 // Conceptual structure
 MapObjects {
     objects: [
@@ -909,7 +910,7 @@ flowchart LR
     O["build/<br/>- base.mapgeo (static)<br/>- map_objects.bin (dynamic)<br/>- *.bin (materials)<br/>- *.tex (textures)"]
 
     P --> S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> O
-```
+````
 
 ### Bake Options
 
@@ -954,13 +955,13 @@ flowchart LR
 
 Bakes must be **deterministic** - same input always produces same output:
 
-| Requirement | Implementation |
-|-------------|----------------|
-| **Stable ordering** | Sort meshes by ID, not memory address |
-| **Stable vertex order** | Deterministic optimization algorithm |
-| **Stable hashing** | Fixed seed for any hash operations |
-| **No timestamps** | Don't embed build time in output |
-| **Reproducible floats** | Consistent rounding/precision |
+| Requirement             | Implementation                        |
+| ----------------------- | ------------------------------------- |
+| **Stable ordering**     | Sort meshes by ID, not memory address |
+| **Stable vertex order** | Deterministic optimization algorithm  |
+| **Stable hashing**      | Fixed seed for any hash operations    |
+| **No timestamps**       | Don't embed build time in output      |
+| **Reproducible floats** | Consistent rounding/precision         |
 
 ```rust
 // Bake produces identical output given identical input
@@ -969,7 +970,7 @@ fn bake(project: &MapProject) -> BakeResult {
     let meshes = project.meshes.iter()
         .sorted_by_key(|m| &m.id)  // Stable sort by ID
         .collect();
-    
+
     // Process in deterministic order
     for mesh in meshes {
         // ...
@@ -999,13 +1000,13 @@ flowchart TD
 
 #### Step Details
 
-| Step | Description |
-|------|-------------|
-| **1. Compute World Bounds** | Calculate `minX`, `maxX`, `minZ`, `maxZ` from all vertices. Y is ignored (2D grid on XZ plane). |
-| **2. Determine Grid Size** | `bucketsPerSide = ceil((maxX - minX) / bucketSizeX)`. Ensure `bucketsPerSide²` ≤ 256. |
-| **3. Assign Triangles** | For each triangle: find bucket containing centroid. If all vertices inside: `InsideFace`. Otherwise: `StickingOutFace` + compute max stick-out. |
-| **4. Reorder Geometry** | Collect vertices per bucket. Create new buffers: `[bucket0 tris][bucket1 tris]...`. Record `StartIndex`, `BaseVertex` per bucket. |
-| **5. Compute Metadata** | Per bucket: `MaxStickOutX/Z`, `InsideFaceCount`, `StickingOutFaceCount`. |
+| Step                        | Description                                                                                                                                     |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1. Compute World Bounds** | Calculate `minX`, `maxX`, `minZ`, `maxZ` from all vertices. Y is ignored (2D grid on XZ plane).                                                 |
+| **2. Determine Grid Size**  | `bucketsPerSide = ceil((maxX - minX) / bucketSizeX)`. Ensure `bucketsPerSide²` ≤ 256.                                                           |
+| **3. Assign Triangles**     | For each triangle: find bucket containing centroid. If all vertices inside: `InsideFace`. Otherwise: `StickingOutFace` + compute max stick-out. |
+| **4. Reorder Geometry**     | Collect vertices per bucket. Create new buffers: `[bucket0 tris][bucket1 tris]...`. Record `StartIndex`, `BaseVertex` per bucket.               |
+| **5. Compute Metadata**     | Per bucket: `MaxStickOutX/Z`, `InsideFaceCount`, `StickingOutFaceCount`.                                                                        |
 
 ### Bucket Assignment Logic
 
@@ -1026,19 +1027,19 @@ fn assign_triangle_to_bucket(
     let centroid = (tri.v0 + tri.v1 + tri.v2) / 3.0;
     let bucket_x = ((centroid.x - grid.min_x) / grid.bucket_size_x) as usize;
     let bucket_z = ((centroid.z - grid.min_z) / grid.bucket_size_z) as usize;
-    
+
     // Bucket bounds
     let bucket_min_x = grid.min_x + bucket_x as f32 * grid.bucket_size_x;
     let bucket_max_x = bucket_min_x + grid.bucket_size_x;
     let bucket_min_z = grid.min_z + bucket_z as f32 * grid.bucket_size_z;
     let bucket_max_z = bucket_min_z + grid.bucket_size_z;
-    
+
     // Check if all vertices inside bucket
     let vertices = [tri.v0, tri.v1, tri.v2];
     let mut is_inside = true;
     let mut max_stick_out_x = 0.0f32;
     let mut max_stick_out_z = 0.0f32;
-    
+
     for v in &vertices {
         if v.x < bucket_min_x {
             is_inside = false;
@@ -1057,7 +1058,7 @@ fn assign_triangle_to_bucket(
             max_stick_out_z = max_stick_out_z.max(v.z - bucket_max_z);
         }
     }
-    
+
     TriangleBucketAssignment {
         bucket_x,
         bucket_z,
@@ -1077,49 +1078,49 @@ fn generate_bucketed_geometry(
 ) -> BucketedGeometry {
     // 1. Compute bounds
     let (min_x, max_x, min_z, max_z) = compute_bounds(triangles);
-    
+
     // 2. Create grid
     let buckets_x = ((max_x - min_x) / settings.bucket_size_x).ceil() as usize;
     let buckets_z = ((max_z - min_z) / settings.bucket_size_z).ceil() as usize;
     let buckets_per_side = buckets_x.max(buckets_z);
-    
+
     // 3. Assign triangles to buckets
-    let mut bucket_tris: Vec<Vec<(usize, bool)>> = 
+    let mut bucket_tris: Vec<Vec<(usize, bool)>> =
         vec![Vec::new(); buckets_per_side * buckets_per_side];
-    
+
     for (tri_idx, tri) in triangles.iter().enumerate() {
         let assignment = assign_triangle_to_bucket(tri, &grid);
         let bucket_idx = assignment.bucket_z * buckets_per_side + assignment.bucket_x;
         bucket_tris[bucket_idx].push((tri_idx, assignment.is_inside));
     }
-    
+
     // 4. Build reordered buffers and bucket metadata
     let mut vertices = Vec::new();
     let mut indices = Vec::new();
     let mut buckets = Vec::new();
-    
+
     for bucket_idx in 0..(buckets_per_side * buckets_per_side) {
         let tris = &bucket_tris[bucket_idx];
-        
+
         let start_index = indices.len() as u32;
         let base_vertex = vertices.len() as u32;
         let mut inside_count = 0u16;
         let mut sticking_out_count = 0u16;
         let mut max_stick_out_x = 0.0f32;
         let mut max_stick_out_z = 0.0f32;
-        
+
         // Sort: inside faces first, then sticking out
         let sorted_tris = tris.iter()
             .sorted_by_key(|(_, is_inside)| !is_inside);
-        
+
         for (tri_idx, is_inside) in sorted_tris {
             let tri = &triangles[*tri_idx];
-            
+
             // Add vertices and indices
             let base = vertices.len() as u16;
             vertices.extend_from_slice(&[tri.v0, tri.v1, tri.v2]);
             indices.extend_from_slice(&[base, base + 1, base + 2]);
-            
+
             if *is_inside {
                 inside_count += 1;
             } else {
@@ -1128,7 +1129,7 @@ fn generate_bucketed_geometry(
                 // ...
             }
         }
-        
+
         buckets.push(GeometryBucket {
             max_stick_out_x,
             max_stick_out_z,
@@ -1138,7 +1139,7 @@ fn generate_bucketed_geometry(
             sticking_out_face_count: sticking_out_count,
         });
     }
-    
+
     BucketedGeometry {
         min_x,
         min_z,
@@ -1234,27 +1235,27 @@ interface MapEditorState {
   project: MapProject | null;
   projectPath: string | null;
   isDirty: boolean;
-  
+
   // Selection
   selectedIds: string[];
   hoveredId: string | null;
-  
+
   // Viewport
   cameraPosition: [number, number, number];
   cameraTarget: [number, number, number];
   viewMode: '3d' | 'top' | 'front' | 'side';
-  
+
   // Tools
   activeTool: 'select' | 'move' | 'rotate' | 'scale';
   gizmoSpace: 'local' | 'world';
   snapEnabled: boolean;
   snapValues: { position: number; rotation: number; scale: number };
-  
+
   // Visibility
   showGrid: boolean;
   showBuckets: boolean;
   showVfx: boolean;
-  
+
   // Actions
   setProject: (project: MapProject) => void;
   selectObjects: (ids: string[]) => void;
@@ -1302,41 +1303,41 @@ export function MapScene({ project }: { project: MapProject }) {
       {/* Environment */}
       <ambientLight intensity={0.4} />
       <directionalLight position={[50, 100, 50]} intensity={0.8} />
-      
+
       {/* Grid */}
       <Grid visible={showGrid} size={10000} divisions={100} />
-      
+
       {/* Meshes */}
       {project.meshes.map(mesh => (
-        <MapMesh 
-          key={mesh.id} 
+        <MapMesh
+          key={mesh.id}
           mesh={mesh}
           selected={selectedIds.includes(mesh.id)}
           onSelect={() => selectObjects([mesh.id])}
         />
       ))}
-      
+
       {/* Prefabs */}
       {project.prefabs.map(prefab => (
-        <PrefabInstance 
-          key={prefab.id} 
+        <PrefabInstance
+          key={prefab.id}
           prefab={prefab}
           selected={selectedIds.includes(prefab.id)}
         />
       ))}
-      
+
       {/* VFX */}
       {project.vfx.map(vfx => (
-        <VfxPlacement 
-          key={vfx.id} 
+        <VfxPlacement
+          key={vfx.id}
           vfx={vfx}
           showPreview={selectedIds.includes(vfx.id)}
         />
       ))}
-      
+
       {/* Bucket visualization (debug) */}
       {showBuckets && <BucketGridVisualization settings={project.settings} />}
-      
+
       {/* Transform gizmo */}
       {selectedIds.length > 0 && (
         <TransformControls
@@ -1388,12 +1389,14 @@ export function MapScene({ project }: { project: MapProject }) {
 ## References
 
 ### LeagueToolkit
+
 - [MapGeometry Issue #85](https://github.com/LeagueToolkit/league-toolkit/issues/85)
 - [BucketedGeometry C# Implementation](https://github.com/LeagueToolkit/LeagueToolkit/blob/main/src/LeagueToolkit/Core/SceneGraph/BucketedGeometry.cs)
 - [EnvironmentAsset C# Implementation](https://github.com/LeagueToolkit/LeagueToolkit/blob/main/src/LeagueToolkit/Core/Environment/EnvironmentAsset.cs)
 - [Forge Design Document](./DESIGN.md)
 
 ### LoL Meta Wiki (Class Definitions)
+
 - [MapPlaceable](https://meta-wiki.leaguetoolkit.dev/classes/mapplaceable/) - Base class for all placed map objects
 - [GdsMapObject](https://meta-wiki.leaguetoolkit.dev/classes/gdsmapobject/) - Dynamic map props and structures
 - [MapParticle](https://meta-wiki.leaguetoolkit.dev/classes/mapparticle/) - VFX placements
@@ -1402,6 +1405,5 @@ export function MapScene({ project }: { project: MapProject }) {
 
 ---
 
-*Document Version: 1.0*  
-*Last Updated: December 2025*
-
+_Document Version: 1.0_  
+_Last Updated: December 2025_
