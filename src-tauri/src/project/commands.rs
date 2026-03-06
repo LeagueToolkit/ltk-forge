@@ -146,7 +146,9 @@ fn validate_project_name(name: &str) -> Result<(), ProjectError> {
 // ── Tauri commands ──────────────────────────────────────────────────
 
 #[tauri::command]
-pub fn create_project(request: CreateProjectRequest) -> Result<CreateProjectResponse, ProjectError> {
+pub fn create_project(
+    request: CreateProjectRequest,
+) -> Result<CreateProjectResponse, ProjectError> {
     validate_project_name(&request.name)?;
 
     let project_dir = Path::new(&request.path);
@@ -212,8 +214,8 @@ pub fn open_project(
     }
 
     let config_str = std::fs::read_to_string(&config_path)?;
-    let mod_project: ModProject =
-        serde_json::from_str(&config_str).map_err(|e| ProjectError::InvalidConfig(e.to_string()))?;
+    let mod_project: ModProject = serde_json::from_str(&config_str)
+        .map_err(|e| ProjectError::InvalidConfig(e.to_string()))?;
 
     let config_value: serde_json::Value = serde_json::from_str(&config_str)?;
 

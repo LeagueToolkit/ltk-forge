@@ -84,7 +84,11 @@ pub fn get_scratch_info(project_root: &Path) -> Result<Option<ScratchInfo>, Proj
 }
 
 /// Get a deterministic scratch path for an editor type and asset hash.
-pub fn get_scratch_path(project_root: &Path, editor_type: &str, asset_hash: &str) -> std::path::PathBuf {
+pub fn get_scratch_path(
+    project_root: &Path,
+    editor_type: &str,
+    asset_hash: &str,
+) -> std::path::PathBuf {
     forge_dir(project_root).join(editor_type).join(asset_hash)
 }
 

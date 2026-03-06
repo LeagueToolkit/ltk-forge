@@ -193,8 +193,14 @@ pub fn scan_all_assets(
     let mut resolved: Vec<ResolvedAssetInfo> = Vec::with_capacity(grouped.len());
     for ((_wad, _rel), mut variants) in grouped {
         variants.sort_by(|a, b| {
-            let pa = priority_map.get(a.layer_name.as_str()).copied().unwrap_or(0);
-            let pb = priority_map.get(b.layer_name.as_str()).copied().unwrap_or(0);
+            let pa = priority_map
+                .get(a.layer_name.as_str())
+                .copied()
+                .unwrap_or(0);
+            let pb = priority_map
+                .get(b.layer_name.as_str())
+                .copied()
+                .unwrap_or(0);
             pb.cmp(&pa) // highest priority first
         });
 
