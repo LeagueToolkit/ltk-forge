@@ -9,7 +9,8 @@ build/
 .turbo/
 
 # AI tooling
-.claude/
+.claude/*
+!.claude/skills/
 .specify/
 
 # Environment
