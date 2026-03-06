@@ -8,52 +8,150 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { Route as rootRouteImport } from './routes/__root'
-import { Route as IndexRouteImport } from './routes/index'
+import { Route as rootRouteImport } from "./routes/__root";
+import { Route as NewProjectRouteImport } from "./routes/new-project";
+import { Route as ProjectRouteRouteImport } from "./routes/project/route";
+import { Route as IndexRouteImport } from "./routes/index";
+import { Route as ProjectSettingsRouteImport } from "./routes/project/settings";
+import { Route as ProjectBrowserRouteImport } from "./routes/project/browser";
 
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const NewProjectRoute = NewProjectRouteImport.update({
+  id: "/new-project",
+  path: "/new-project",
   getParentRoute: () => rootRouteImport,
-} as any)
+} as any);
+const ProjectRouteRoute = ProjectRouteRouteImport.update({
+  id: "/project",
+  path: "/project",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const IndexRoute = IndexRouteImport.update({
+  id: "/",
+  path: "/",
+  getParentRoute: () => rootRouteImport,
+} as any);
+const ProjectSettingsRoute = ProjectSettingsRouteImport.update({
+  id: "/settings",
+  path: "/settings",
+  getParentRoute: () => ProjectRouteRoute,
+} as any);
+const ProjectBrowserRoute = ProjectBrowserRouteImport.update({
+  id: "/browser",
+  path: "/browser",
+  getParentRoute: () => ProjectRouteRoute,
+} as any);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
+  "/": typeof IndexRoute;
+  "/project": typeof ProjectRouteRouteWithChildren;
+  "/new-project": typeof NewProjectRoute;
+  "/project/browser": typeof ProjectBrowserRoute;
+  "/project/settings": typeof ProjectSettingsRoute;
 }
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
+  "/": typeof IndexRoute;
+  "/project": typeof ProjectRouteRouteWithChildren;
+  "/new-project": typeof NewProjectRoute;
+  "/project/browser": typeof ProjectBrowserRoute;
+  "/project/settings": typeof ProjectSettingsRoute;
 }
 export interface FileRoutesById {
-  __root__: typeof rootRouteImport
-  '/': typeof IndexRoute
+  __root__: typeof rootRouteImport;
+  "/": typeof IndexRoute;
+  "/project": typeof ProjectRouteRouteWithChildren;
+  "/new-project": typeof NewProjectRoute;
+  "/project/browser": typeof ProjectBrowserRoute;
+  "/project/settings": typeof ProjectSettingsRoute;
 }
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
-  fileRoutesById: FileRoutesById
+  fileRoutesByFullPath: FileRoutesByFullPath;
+  fullPaths:
+    | "/"
+    | "/project"
+    | "/new-project"
+    | "/project/browser"
+    | "/project/settings";
+  fileRoutesByTo: FileRoutesByTo;
+  to:
+    | "/"
+    | "/project"
+    | "/new-project"
+    | "/project/browser"
+    | "/project/settings";
+  id:
+    | "__root__"
+    | "/"
+    | "/project"
+    | "/new-project"
+    | "/project/browser"
+    | "/project/settings";
+  fileRoutesById: FileRoutesById;
 }
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
+  IndexRoute: typeof IndexRoute;
+  ProjectRouteRoute: typeof ProjectRouteRouteWithChildren;
+  NewProjectRoute: typeof NewProjectRoute;
 }
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
+    "/new-project": {
+      id: "/new-project";
+      path: "/new-project";
+      fullPath: "/new-project";
+      preLoaderRoute: typeof NewProjectRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/project": {
+      id: "/project";
+      path: "/project";
+      fullPath: "/project";
+      preLoaderRoute: typeof ProjectRouteRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexRouteImport;
+      parentRoute: typeof rootRouteImport;
+    };
+    "/project/settings": {
+      id: "/project/settings";
+      path: "/settings";
+      fullPath: "/project/settings";
+      preLoaderRoute: typeof ProjectSettingsRouteImport;
+      parentRoute: typeof ProjectRouteRoute;
+    };
+    "/project/browser": {
+      id: "/project/browser";
+      path: "/browser";
+      fullPath: "/project/browser";
+      preLoaderRoute: typeof ProjectBrowserRouteImport;
+      parentRoute: typeof ProjectRouteRoute;
+    };
   }
 }
 
+interface ProjectRouteRouteChildren {
+  ProjectBrowserRoute: typeof ProjectBrowserRoute;
+  ProjectSettingsRoute: typeof ProjectSettingsRoute;
+}
+
+const ProjectRouteRouteChildren: ProjectRouteRouteChildren = {
+  ProjectBrowserRoute: ProjectBrowserRoute,
+  ProjectSettingsRoute: ProjectSettingsRoute,
+};
+
+const ProjectRouteRouteWithChildren = ProjectRouteRoute._addFileChildren(
+  ProjectRouteRouteChildren,
+);
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-}
+  ProjectRouteRoute: ProjectRouteRouteWithChildren,
+  NewProjectRoute: NewProjectRoute,
+};
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();

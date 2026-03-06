@@ -9,13 +9,16 @@ const sizeClasses: Record<Size, string> = {
   lg: "px-4 py-2.5 text-[length:var(--font-size-lg)]",
 };
 
-interface InputRootProps extends Omit<BaseInput.Props, "className" | "size"> {
-  inputSize?: Size;
+export interface InputProps extends Omit<
+  BaseInput.Props,
+  "className" | "size"
+> {
+  size?: Size;
   className?: string;
 }
 
-const InputRoot = React.forwardRef<HTMLInputElement, InputRootProps>(
-  function InputRoot({ inputSize = "md", className, ...props }, ref) {
+export const Input = React.forwardRef<HTMLInputElement, InputProps>(
+  function Input({ size = "md", className, ...props }, ref) {
     return (
       <BaseInput
         ref={ref}
@@ -27,7 +30,7 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputRootProps>(
           "transition-colors duration-[var(--transition-fast)]",
           "focus:border-[var(--color-border-focus)] focus:outline-none",
           "data-[disabled]:opacity-50 data-[disabled]:pointer-events-none",
-          sizeClasses[inputSize],
+          sizeClasses[size],
           className,
         )}
         {...props}
@@ -35,7 +38,3 @@ const InputRoot = React.forwardRef<HTMLInputElement, InputRootProps>(
     );
   },
 );
-
-export const Input = {
-  Root: InputRoot,
-};

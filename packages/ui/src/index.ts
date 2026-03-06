@@ -1,8 +1,12 @@
 export type { Intent, Size } from "./types";
 
-export { Button } from "./components/Button";
-export { Input } from "./components/Input";
-export { Checkbox } from "./components/Checkbox";
+export { Button, type ButtonProps } from "./components/Button";
+export { Input, type InputProps } from "./components/Input";
+export { Checkbox, type CheckboxProps } from "./components/Checkbox";
+export {
+  FieldWrapper,
+  type FieldWrapperProps,
+} from "./components/FieldWrapper";
 export { Select } from "./components/Select";
 export { Separator } from "./components/Separator";
 export { Dialog } from "./components/Dialog";

@@ -17,30 +17,30 @@ function TitleBar() {
         LTK Forge
       </span>
       <div className="flex h-full">
-        <Button.Root
+        <Button
           variant="ghost"
           intent="primary"
           className={`${titlebarButtonClass} text-sm hover:bg-[var(--color-bg-tertiary)]`}
           onClick={() => appWindow.minimize()}
         >
           &#x2013;
-        </Button.Root>
-        <Button.Root
+        </Button>
+        <Button
           variant="ghost"
           intent="primary"
           className={`${titlebarButtonClass} text-xs hover:bg-[var(--color-bg-tertiary)]`}
           onClick={() => appWindow.toggleMaximize()}
         >
           &#x25A1;
-        </Button.Root>
-        <Button.Root
+        </Button>
+        <Button
           variant="ghost"
           intent="danger"
-          className={`${titlebarButtonClass} text-sm hover:bg-[#c42b1c] hover:text-white`}
+          className={`${titlebarButtonClass} text-sm hover:bg-[var(--color-danger-600)] hover:text-white`}
           onClick={() => appWindow.close()}
         >
           &#x2715;
-        </Button.Root>
+        </Button>
       </div>
     </div>
   );
