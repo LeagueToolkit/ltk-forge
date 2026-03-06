@@ -23,7 +23,9 @@
     "@ltk-forge/math": "workspace:*",
     "@ltk-forge/mapgeo-types": "workspace:*",
     "@ltk-forge/mapgeo-utils": "workspace:*",
-    "@ltk-forge/map-renderer": "workspace:*"
+    "@ltk-forge/map-renderer": "workspace:*",
+    "@ltk-forge/theme": "workspace:*",
+    "@ltk-forge/ui": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",

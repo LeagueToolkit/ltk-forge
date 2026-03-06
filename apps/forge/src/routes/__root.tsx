@@ -1,5 +1,9 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { getCurrentWindow } from "@tauri-apps/api/window";
+import { Button } from "@ltk-forge/ui";
+
+const titlebarButtonClass =
+  "w-[46px] h-full rounded-none text-[var(--color-text-secondary)]";
 
 function TitleBar() {
   const appWindow = getCurrentWindow();
@@ -7,78 +11,36 @@ function TitleBar() {
   return (
     <div
       data-tauri-drag-region
-      style={{
-        height: "var(--titlebar-height)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        backgroundColor: "var(--color-bg-secondary)",
-        paddingLeft: "12px",
-        userSelect: "none",
-        WebkitUserSelect: "none",
-      }}
+      className="flex items-center justify-between select-none h-[var(--titlebar-height)] bg-[var(--color-bg-secondary)] pl-3"
     >
-      <span style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-text-secondary)" }}>
+      <span className="text-xs font-semibold text-[var(--color-text-secondary)]">
         LTK Forge
       </span>
-      <div style={{ display: "flex", height: "100%" }}>
-        <button
+      <div className="flex h-full">
+        <Button.Root
+          variant="ghost"
+          intent="primary"
+          className={`${titlebarButtonClass} text-sm hover:bg-[var(--color-bg-tertiary)]`}
           onClick={() => appWindow.minimize()}
-          style={{
-            width: "46px",
-            height: "100%",
-            border: "none",
-            background: "transparent",
-            color: "var(--color-text-secondary)",
-            cursor: "pointer",
-            fontSize: "14px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-bg-tertiary)")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
         >
           &#x2013;
-        </button>
-        <button
+        </Button.Root>
+        <Button.Root
+          variant="ghost"
+          intent="primary"
+          className={`${titlebarButtonClass} text-xs hover:bg-[var(--color-bg-tertiary)]`}
           onClick={() => appWindow.toggleMaximize()}
-          style={{
-            width: "46px",
-            height: "100%",
-            border: "none",
-            background: "transparent",
-            color: "var(--color-text-secondary)",
-            cursor: "pointer",
-            fontSize: "12px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "var(--color-bg-tertiary)")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
         >
           &#x25A1;
-        </button>
-        <button
+        </Button.Root>
+        <Button.Root
+          variant="ghost"
+          intent="danger"
+          className={`${titlebarButtonClass} text-sm hover:bg-[#c42b1c] hover:text-white`}
           onClick={() => appWindow.close()}
-          style={{
-            width: "46px",
-            height: "100%",
-            border: "none",
-            background: "transparent",
-            color: "var(--color-text-secondary)",
-            cursor: "pointer",
-            fontSize: "14px",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onMouseEnter={(e) => (e.currentTarget.style.backgroundColor = "#c42b1c")}
-          onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "transparent")}
         >
           &#x2715;
-        </button>
+        </Button.Root>
       </div>
     </div>
   );
@@ -86,9 +48,9 @@ function TitleBar() {
 
 function RootLayout() {
   return (
-    <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+    <div className="flex flex-col h-full">
       <TitleBar />
-      <main style={{ flex: 1, overflow: "auto" }}>
+      <main className="flex-1 overflow-auto">
         <Outlet />
       </main>
     </div>
