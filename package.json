@@ -3,12 +3,16 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "dev": "tauri dev",
+    "build:app": "tauri build",
+    "tauri": "tauri",
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
     "test": "turbo run test",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {
+    "@tauri-apps/cli": "^2.0.0",
     "turbo": "^2.4.0",
     "typescript": "^5.7.0"
   },
