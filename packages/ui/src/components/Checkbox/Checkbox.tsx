@@ -16,13 +16,16 @@ const indicatorSizeClasses: Record<Size, string> = {
   lg: "h-4 w-4",
 };
 
-interface CheckboxRootProps extends Omit<BaseCheckbox.Root.Props, "className"> {
+export interface CheckboxProps extends Omit<
+  BaseCheckbox.Root.Props,
+  "className"
+> {
   size?: Size;
   className?: string;
 }
 
-const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxRootProps>(
-  function CheckboxRoot({ size = "md", className, ...props }, ref) {
+export const Checkbox = React.forwardRef<HTMLButtonElement, CheckboxProps>(
+  function Checkbox({ size = "md", className, ...props }, ref) {
     return (
       <BaseCheckbox.Root
         ref={ref}
@@ -38,39 +41,16 @@ const CheckboxRoot = React.forwardRef<HTMLButtonElement, CheckboxRootProps>(
           className,
         )}
         {...props}
-      />
+      >
+        <BaseCheckbox.Indicator
+          className={twMerge(
+            "flex items-center justify-center text-white",
+            indicatorSizeClasses[size],
+          )}
+        >
+          <LuCheck className="h-full w-full" />
+        </BaseCheckbox.Indicator>
+      </BaseCheckbox.Root>
     );
   },
 );
-
-interface CheckboxIndicatorProps extends Omit<
-  BaseCheckbox.Indicator.Props,
-  "className"
-> {
-  size?: Size;
-  className?: string;
-}
-
-const CheckboxIndicator = React.forwardRef<
-  HTMLSpanElement,
-  CheckboxIndicatorProps
->(function CheckboxIndicator({ size = "md", className, ...props }, ref) {
-  return (
-    <BaseCheckbox.Indicator
-      ref={ref}
-      className={twMerge(
-        "flex items-center justify-center text-white",
-        indicatorSizeClasses[size],
-        className,
-      )}
-      {...props}
-    >
-      <LuCheck className="h-full w-full" />
-    </BaseCheckbox.Indicator>
-  );
-});
-
-export const Checkbox = {
-  Root: CheckboxRoot,
-  Indicator: CheckboxIndicator,
-};

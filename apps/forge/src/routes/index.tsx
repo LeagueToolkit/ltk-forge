@@ -1,96 +1,75 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { invoke } from "@tauri-apps/api/core";
-import { useEffect, useState } from "react";
-
-interface AppInfo {
-  name: string;
-  version: string;
-}
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { open } from "@tauri-apps/plugin-dialog";
+import { Button } from "@ltk-forge/ui";
+import { useProjectStore } from "../stores/project-store";
+import { RecentProjectsList } from "../components/recent-projects/RecentProjectsList";
 
 function LandingPage() {
-  const [appInfo, setAppInfo] = useState<AppInfo | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
+  const openProject = useProjectStore((s) => s.openProject);
+  const isLoading = useProjectStore((s) => s.isLoading);
+  const error = useProjectStore((s) => s.error);
+  const clearError = useProjectStore((s) => s.clearError);
 
-  useEffect(() => {
-    invoke<AppInfo>("get_app_info")
-      .then(setAppInfo)
-      .catch((err) => setError(String(err)));
-  }, []);
+  const handleOpenProject = async (path?: string) => {
+    clearError();
+    const projectPath =
+      path ?? (await open({ directory: true, multiple: false }));
+
+    if (!projectPath) return;
+
+    try {
+      await openProject(projectPath);
+      navigate({ to: "/project/browser" });
+    } catch {
+      // Error is set in the store
+    }
+  };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100%",
-        gap: "16px",
-      }}
-    >
-      <h1
-        style={{
-          fontSize: "32px",
-          fontWeight: 700,
-          color: "var(--color-text-primary)",
-          margin: 0,
-        }}
-      >
-        LTK Forge
-      </h1>
-      <p style={{ color: "var(--color-text-secondary)", margin: 0, fontSize: "14px" }}>
-        Visual editor for League of Legends modding
-      </p>
-      {appInfo && (
-        <div
-          style={{
-            marginTop: "24px",
-            padding: "12px 24px",
-            borderRadius: "8px",
-            backgroundColor: "var(--color-bg-tertiary)",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            fontSize: "13px",
-          }}
-        >
-          <span
-            style={{
-              width: "8px",
-              height: "8px",
-              borderRadius: "50%",
-              backgroundColor: "#22c55e",
-            }}
-          />
-          <span style={{ color: "var(--color-text-secondary)" }}>
-            Backend connected &middot; v{appInfo.version}
-          </span>
+    <div className="flex items-center justify-center h-full">
+      <div className="w-full max-w-md p-6">
+        <h1 className="text-2xl font-bold text-[var(--color-text-primary)] text-center">
+          LTK Forge
+        </h1>
+        <p className="text-sm text-[var(--color-text-secondary)] text-center mt-1 mb-6">
+          Visual editor for League of Legends modding
+        </p>
+
+        {/* Action buttons */}
+        <div className="flex gap-2 mb-6">
+          <Button
+            intent="primary"
+            className="flex-1"
+            onClick={() => navigate({ to: "/new-project" })}
+          >
+            New Project
+          </Button>
+          <Button
+            variant="outline"
+            intent="primary"
+            className="flex-1"
+            onClick={() => handleOpenProject()}
+            disabled={isLoading}
+          >
+            {isLoading ? "Opening..." : "Open Project"}
+          </Button>
         </div>
-      )}
-      {error && (
-        <div
-          style={{
-            marginTop: "24px",
-            padding: "12px 24px",
-            borderRadius: "8px",
-            backgroundColor: "var(--color-bg-tertiary)",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
-            fontSize: "13px",
-          }}
-        >
-          <span
-            style={{
-              width: "8px",
-              height: "8px",
-              borderRadius: "50%",
-              backgroundColor: "#ef4444",
-            }}
-          />
-          <span style={{ color: "#ef4444" }}>Backend error: {error}</span>
+
+        {error && (
+          <div className="rounded-md bg-[var(--color-danger-500)]/10 border border-[var(--color-danger-500)]/20 px-3 py-2 text-xs text-[var(--color-danger-400)] mb-4">
+            {error}
+          </div>
+        )}
+
+        {/* Recent projects */}
+        <div>
+          <h2 className="text-xs font-semibold text-[var(--color-text-secondary)] uppercase tracking-wide mb-2">
+            Recent Projects
+          </h2>
+          <RecentProjectsList onOpenProject={handleOpenProject} />
         </div>
-      )}
+      </div>
     </div>
   );
 }
