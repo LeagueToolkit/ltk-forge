@@ -1,0 +1,14 @@
+{
+  "extends": "@ltk-forge/tsconfig/react-library.json",
+  "compilerOptions": {
+    "target": "ES2020",
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "noEmit": true,
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["src"]
+}
