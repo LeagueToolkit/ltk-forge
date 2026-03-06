@@ -1,0 +1,10 @@
+{
+  "name": "@ltk-forge/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "exports": {
+    "./base.json": "./base.json",
+    "./library.json": "./library.json",
+    "./react-library.json": "./react-library.json"
+  }
+}
